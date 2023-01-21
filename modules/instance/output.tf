@@ -7,6 +7,7 @@ output "instance" {
     size_volume_gb = module.create_volume.size_in_gb
     name_network = var.name_network
     id_network = scaleway_instance_server.instance.id
+    ip_public = scaleway_instance_server.instance.public_ip
   }
   description = "instance generate"
 }

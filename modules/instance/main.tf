@@ -7,11 +7,14 @@ terraform {
   }
 }
 
+resource "scaleway_instance_ip" "public_ip" {}
+
 resource "scaleway_instance_server" "instance" {
   type = var.type
   name =  var.name
   image =  var.image
   additional_volume_ids = [module.create_volume.volume_id]
+  ip_id = scaleway_instance_ip.public_ip.id
   private_network {
     pn_id = var.network_id
   }
