@@ -25,6 +25,7 @@ locals {
   instances = {
     for instance in local.servers : instance.name => instance
   }
+  network = "Dan_network"
 }
 module "create_instance" {
     for_each = local.instances
@@ -34,4 +35,12 @@ module "create_instance" {
     type = each.value.type
     size_in_gb = each.value.volume_size
     type_volume = each.value.type_volume
+    name_network = module.pv_network.pv_network_name
+    network_id = module.pv_network.pv_network_id
+
+    depends_on = [module.pv_network]
+}
+module "pv_network" {
+  source = "./modules/network"
+  name_network = local.network
 }
