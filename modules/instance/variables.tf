@@ -18,3 +18,12 @@ variable "type_volume" {
   description = "type du volume"
   type = string
 }
+variable "name_network" {
+  description = "name network"
+  type = string
+}
+variable network_id {
+  type        = string
+  description = "network_id"
+}
+

@@ -12,6 +12,9 @@ resource "scaleway_instance_server" "instance" {
   name =  var.name
   image =  var.image
   additional_volume_ids = [module.create_volume.volume_id]
+  private_network {
+    pn_id = var.network_id
+  }
 }
 
 module "create_volume" {
