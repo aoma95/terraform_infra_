@@ -27,3 +27,17 @@ module "create_volume" {
   type = var.type_volume
   size_in_gb = var.size_in_gb
 }
+
+resource "null_resource" "install" {
+  connection {
+    host = scaleway_instance_server.instance.public_ip
+    user = "root"
+    private_key = file("~/.ssh/id_rsa")
+  }
+  provisioner "remote-exec" {
+    inline = [
+        "curl -fsSL https://get.docker.com -o get-docker.sh",
+        "sh get-docker.sh"
+    ]
+  }
+}

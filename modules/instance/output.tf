@@ -11,3 +11,7 @@ output "instance" {
   }
   description = "instance generate"
 }
+output "public_ip"{
+  value = scaleway_instance_server.instance.public_ip
+  description = "ip publique"
+}
