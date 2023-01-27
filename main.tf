@@ -10,15 +10,17 @@ terraform {
 
 locals {
   # Generate list of servers name
+  number_dev_s = 3
+  number_dev_xl = 1
   servers = concat(
      [
-        for i in range(3) : {
+        for i in range(local.number_dev_s) : {
             name = "Dan_DEV1_S_${i+1}", image = "ubuntu_focal", type = "DEV1-S", volume_size = 30, type_volume = "b_ssd"
             }
     ],[
     # {name = "Dan_DEV1_XL1", image_vm = "ubuntu_focal", type = "DEV1-XL"}
-        for i in range(1) : {
-            name = "Dan_DEV1_XL_${i+1}", image = "ubuntu_focal", type = "DEV1-XL", volume_size = 30, type_volume = "b_ssd"
+        for i in range(local.number_dev_xl) : {
+            name = "Dan_DEV1_XL_${i+1}", image = "ubuntu_focal", type = "DEV1-XL", volume_size = 30, type_volume = "b_ssd",
             }
     ]
   )
@@ -26,6 +28,12 @@ locals {
     for instance in local.servers : instance.name => instance
   }
   network = "Dan_network"
+
+  list_sg = {
+    "DEV1-XL":[22,3000,9090,5601],
+    "DEV1-S":[22]
+  }
+  
 }
 module "create_instance" {
     for_each = local.instances
@@ -37,10 +45,17 @@ module "create_instance" {
     type_volume = each.value.type_volume
     name_network = module.pv_network.pv_network_name
     network_id = module.pv_network.pv_network_id
-
-    depends_on = [module.pv_network]
+    security_group_id = module.security_group[each.value.type].sg_id
 }
 module "pv_network" {
   source = "./modules/network"
   name_network = local.network
+}
+
+module "security_group" {
+  for_each = {for key,sg in local.list_sg : key => sg}
+  source = "./modules/security_group"
+  name_sg = "Dan_${each.key}"
+  port = each.value
+
 }

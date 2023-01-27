@@ -18,6 +18,7 @@ resource "scaleway_instance_server" "instance" {
   private_network {
     pn_id = var.network_id
   }
+  security_group_id = var.security_group_id
 }
 
 module "create_volume" {

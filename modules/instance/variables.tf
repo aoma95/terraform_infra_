@@ -26,4 +26,8 @@ variable network_id {
   type        = string
   description = "network_id"
 }
+variable security_group_id {
+  type= string
+  description = "id security group"
+}
 
