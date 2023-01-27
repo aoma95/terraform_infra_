@@ -59,3 +59,8 @@ module "security_group" {
   port = each.value
 
 }
+
+resource "scaleway_account_ssh_key" "ssh" {
+  name       = "ssh_key"
+  public_key = var.ssh_key_pub
+}
