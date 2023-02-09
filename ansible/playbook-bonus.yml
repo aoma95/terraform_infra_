@@ -61,14 +61,14 @@
           {{ partition.mount }}
           {% endfor %}
           {% endif %}
-        dest: "/tmp/fic{{item}}_{{ result.ansible_facts.ansible_nodename }}"
+        dest: "/tmp/{{ 'fic' if item == '1' or item == '2' else 'fichier' }}{{ item }}_{{ result.ansible_facts.ansible_nodename }}"
       loop: [0, 1, 2]
     - name: Fetch files
       fetch:
         src: "/tmp/{{ item }}"
         dest: "/home/dan/{{ item }}"
         flat: yes
-      loop: ["fic0_{{ result.ansible_facts.ansible_nodename }}", "fic1_{{ result.ansible_facts.ansible_nodename }}", "fic2_{{ result.ansible_facts.ansible_nodename }}"]
+      loop: ["fic0_{{ result.ansible_facts.ansible_nodename }}", "fichier1_{{ result.ansible_facts.ansible_nodename }}", "fic2_{{ result.ansible_facts.ansible_nodename }}"]
       # with_items:
       #   - fic0_{{ result.ansible_facts.ansible_nodename }}
       #   - fic1_{{ result.ansible_facts.ansible_nodename }}
