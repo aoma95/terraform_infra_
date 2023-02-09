@@ -1,0 +1,73 @@
+---
+- name: Execute ls on Scaleway instances
+  hosts: all
+  vars:
+    ansible_user: root
+    ansible_ssh_private_key_file: /home/dan/.ssh/id_rsa
+  tasks:
+      - name: Install aptitude
+        apt:
+          name: aptitude
+          state: latest
+          update_cache: true
+
+      - name: Install required system packages
+        apt:
+          pkg:
+            - apt-transport-https
+            - ca-certificates
+            - curl
+            - software-properties-common
+          state: latest
+          update_cache: true
+
+      - name: Add Docker GPG apt Key
+        apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+
+      - name: Add Docker Repository
+        apt_repository:
+          repo: deb https://download.docker.com/linux/ubuntu focal stable
+          state: present
+
+      - name: Update apt and install docker-ce
+        apt:
+          name: docker-ce
+          state: latest
+          update_cache: 
+
+      - name: Ensure Docker service is started and enabled
+        systemd:
+          name: docker
+          state: started
+          enabled: yes
+
+      - name: Create user dan
+        user:
+          name: dan
+          state: present
+          groups: docker
+          append: yes
+
+
+      - name: Generate SSH key for user dan
+        shell: ssh-keygen -t rsa -f /home/dan/.ssh/id_rsa -q -P ""
+        become: yes
+        become_user: dan
+
+      - name: Copy ssh public key to authorized_keys
+        authorized_key:
+          user: dan
+          key: "{{ lookup('file', '/home/dan/.ssh/id_rsa.pub') }}"
+
+      - name: Add new user to ssh config
+        lineinfile:
+          dest: /etc/ssh/sshd_config
+          line: "AllowUsers dan"
+          state: present
+
+      - name: Restart ssh service
+        service:
+          name: ssh
+          state: restarted

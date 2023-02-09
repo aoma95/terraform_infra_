@@ -1,0 +1,75 @@
+---
+- name: Create and copy files
+  hosts: all
+  vars:
+    ansible_user: root
+    ansible_ssh_private_key_file: /home/dan/.ssh/id_rsa
+  tasks:
+    - name: Get information
+      setup:
+      register: result
+    - name: Debug result
+      debug:
+        var: result.ansible_facts
+    # - name: Create first file with distribution release
+    #   copy:
+    #     content: "{{ result.ansible_facts.ansible_distribution_release | upper }}"
+    #     dest: "/tmp/fic0"
+    # - name: Fetch file from remote host distrib
+    #   fetch:
+    #     src: "/tmp/fic0"
+    #     dest: "/home/dan/fic0_{{ result.ansible_facts.ansible_nodename }}"
+    #     flat: yes
+    # - name: Debug distribe
+    #   debug:
+    #     var: result.ansible_facts.ansible_distribution_release
+
+    # - name: Create second file with IP address
+    #   copy:
+    #     content: "{{ result.ansible_facts.ansible_default_ipv4.address }}"
+    #     dest: "/tmp/fic1"
+    # - name: Fetch file from remote host ip
+    #   fetch:
+    #     src: "/tmp/fic1"
+    #     dest: "/home/dan/fic1_{{ result.ansible_facts.ansible_nodename }}"
+    #     flat: yes
+    # - name: Debug ip
+    #   debug:
+    #     var: result.ansible_facts.ansible_default_ipv4.address
+
+    # - name: Create third file with list of partitions
+    #   copy:
+    #     content: "{{ result.ansible_facts.ansible_mounts | to_json }}"
+    #     dest: "/tmp/fic2"
+    # - name: Fetch file from remote host partition
+    #   fetch:
+    #     src: "/tmp/fic2"
+    #     dest: "/home/dan/fic2_{{ result.ansible_facts.ansible_nodename }}"
+    #     flat: yes
+    # - name: Debug partition 
+    #   debug:
+    #     var: result.ansible_facts.ansible_mounts
+    - name: Create three files with dynamic content
+      copy:
+        content: |
+          {% if item == 0 %}
+          {{ result.ansible_facts.ansible_distribution_release | upper }}
+          {% elif item == 1 %}
+          {{ result.ansible_facts.ansible_default_ipv4.address }}
+          {% elif item == 2 %}
+          {% for partition in result.ansible_facts.ansible_mounts %}
+          {{ partition.mount }}
+          {% endfor %}
+          {% endif %}
+        dest: "/tmp/fic{{item}}_{{ result.ansible_facts.ansible_nodename }}"
+      loop: [0, 1, 2]
+    - name: Fetch files
+      fetch:
+        src: "/tmp/{{ item }}"
+        dest: "/home/dan/{{ item }}"
+        flat: yes
+      loop: ["fic0_{{ result.ansible_facts.ansible_nodename }}", "fic1_{{ result.ansible_facts.ansible_nodename }}", "fic2_{{ result.ansible_facts.ansible_nodename }}"]
+      # with_items:
+      #   - fic0_{{ result.ansible_facts.ansible_nodename }}
+      #   - fic1_{{ result.ansible_facts.ansible_nodename }}
+      #   - fic2_{{ result.ansible_facts.ansible_nodename }}

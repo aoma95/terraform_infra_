@@ -15,6 +15,7 @@ resource "scaleway_instance_server" "instance" {
   image =  var.image
   additional_volume_ids = [module.create_volume.volume_id]
   ip_id = scaleway_instance_ip.public_ip.id
+  tags = [ "Dan"]
   private_network {
     pn_id = var.network_id
   }
@@ -28,16 +29,16 @@ module "create_volume" {
   size_in_gb = var.size_in_gb
 }
 
-resource "null_resource" "install" {
-  connection {
-    host = scaleway_instance_server.instance.public_ip
-    user = "root"
-    private_key = file("~/.ssh/id_rsa")
-  }
-  provisioner "remote-exec" {
-    inline = [
-        "curl -fsSL https://get.docker.com -o get-docker.sh",
-        "sh get-docker.sh"
-    ]
-  }
-}
+# resource "null_resource" "install" {
+#   connection {
+#     host = scaleway_instance_server.instance.public_ip
+#     user = "root"
+#     private_key = file("~/.ssh/id_rsa")
+#   }
+#   provisioner "remote-exec" {
+#     inline = [
+#         "curl -fsSL https://get.docker.com -o get-docker.sh",
+#         "sh get-docker.sh"
+#     ]
+#   }
+# }
