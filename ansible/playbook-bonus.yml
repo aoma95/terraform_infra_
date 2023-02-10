@@ -61,7 +61,7 @@
           {{ partition.mount }}
           {% endfor %}
           {% endif %}
-        dest: "/tmp/{{ 'fic' if item == '1' or item == '2' else 'fichier' }}{{ item }}_{{ result.ansible_facts.ansible_nodename }}"
+        dest: "/tmp/{{ 'fic' if item == 0 or item == 2 else 'fichier' }}{{ item }}_{{ result.ansible_facts.ansible_nodename }}"
       loop: [0, 1, 2]
     - name: Fetch files
       fetch:
