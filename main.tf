@@ -46,6 +46,7 @@ module "create_instance" {
     name_network = module.pv_network.pv_network_name
     network_id = module.pv_network.pv_network_id
     security_group_id = module.security_group[each.value.type].sg_id
+    tag = "Dan_${each.value.type}"
 }
 module "pv_network" {
   source = "./modules/network"

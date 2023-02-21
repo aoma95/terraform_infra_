@@ -15,7 +15,7 @@ resource "scaleway_instance_server" "instance" {
   image =  var.image
   additional_volume_ids = [module.create_volume.volume_id]
   ip_id = scaleway_instance_ip.public_ip.id
-  tags = [ "Dan"]
+  tags = [ "Dan",var.tag]
   private_network {
     pn_id = var.network_id
   }

@@ -2,4 +2,6 @@ plugin: scaleway
 regions:
   - par1
 tags:
-  - Dan
+  - "Dan"
+  - "Dan_DEV1-S"
+  - "Dan_DEV1-XL"

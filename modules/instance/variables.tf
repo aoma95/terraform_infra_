@@ -30,4 +30,8 @@ variable security_group_id {
   type= string
   description = "id security group"
 }
+variable tag {
+  type        = string
+  description = "tag"
+}
 

@@ -49,20 +49,35 @@
     # - name: Debug partition 
     #   debug:
     #     var: result.ansible_facts.ansible_mounts
-    - name: Create three files with dynamic content
-      copy:
-        content: |
-          {% if item == 0 %}
-          {{ result.ansible_facts.ansible_distribution_release | upper }}
-          {% elif item == 1 %}
-          {{ result.ansible_facts.ansible_default_ipv4.address }}
-          {% elif item == 2 %}
-          {% for partition in result.ansible_facts.ansible_mounts %}
-          {{ partition.mount }}
-          {% endfor %}
-          {% endif %}
-        dest: "/tmp/{{ 'fic' if item == 0 or item == 2 else 'fichier' }}{{ item }}_{{ result.ansible_facts.ansible_nodename }}"
-      loop: [0, 1, 2]
+
+
+
+    #ESSAI 1
+    # - name: Create three files with dynamic content
+    #   copy:
+    #     content: |
+    #       {% if item == 0 %}
+    #       {{ result.ansible_facts.ansible_distribution_release | upper }}
+    #       {% elif item == 1 %}
+    #       {{ result.ansible_facts.ansible_default_ipv4.address }}
+    #       {% elif item == 2 %}
+    #       {% for partition in result.ansible_facts.ansible_mounts %}
+    #       {{ partition.mount }}
+    #       {% endfor %}
+    #       {% endif %}
+    #     dest: "/tmp/{{ 'fic' if item == 0 or item == 2 else 'fichier' }}{{ item }}_{{ result.ansible_facts.ansible_nodename }}"
+    #   loop: [0, 1, 2]
+    - name: copy multiple items
+      copy: 
+        content: "{{ item.content }}" 
+        dest: "{{ item.dest }}"
+      loop:
+        - content: "{{ result.ansible_facts.ansible_distribution_release | upper }}"
+          dest: "/tmp/fic0_{{ result.ansible_facts.ansible_nodename }}"
+        - content: "{{ result.ansible_facts.ansible_default_ipv4.address }}"
+          dest: "/tmp/fichier1_{{ result.ansible_facts.ansible_nodename }}"
+        - content: {{  result.ansible_facts.ansible_mounts }}
+          dest: "/tmp/fic2_{{ result.ansible_facts.ansible_nodename }}"
     - name: Fetch files
       fetch:
         src: "/tmp/{{ item }}"
