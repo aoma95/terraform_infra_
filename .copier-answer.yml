@@ -1,0 +1,3 @@
+_src_path: /home/dan/terraform_infra_
+project_name: Scaleway ES
+terraform_version: 1.3.7

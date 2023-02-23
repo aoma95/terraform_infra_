@@ -1,0 +1,20 @@
+# Configuration pour pre-commit hooks
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks  # URL du référentiel GitHub contenant les hooks
+    rev: v4.4.0  # La version du référentiel que nous utilisons
+    hooks:
+    -   id: trailing-whitespace  # Hook pour supprimer les espaces de fin inutiles dans les fichiers
+    -   id: end-of-file-fixer  # Hook pour ajouter une ligne vide à la fin des fichiers qui n'en ont pas
+    -   id: check-yaml  # Hook pour vérifier la syntaxe YAML des fichiers
+    -   id: check-added-large-files  # Hook pour empêcher l'ajout de fichiers volumineux dans le référentiel
+
+# Configuration pour pre-commit-terraform
+- repo: https://github.com/antonbabenko/pre-commit-terraform  # URL du référentiel GitHub contenant les hooks Terraform
+  rev: v1.77.0  # La version du référentiel que nous utilisons
+  hooks:
+    - id: terraform_fmt  # Hook pour formater les fichiers Terraform
+    - id: terraform_validate  # Hook pour valider la syntaxe des fichiers Terraform
+    - id: terraform_tflint  # Hook pour vérifier les erreurs de style Terraform
+    - id: terraform_tfsec  # Hook pour rechercher les erreurs de sécurité Terraform
+    - id: terraform_checkov  # Hook pour vérifier la conformité des fichiers Terraform avec les normes de bonnes pratiques
+    - id: terraform_docs  # Hook pour générer la documentation Terraform à partir des commentaires dans les fichiers
